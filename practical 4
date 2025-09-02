@@ -1,0 +1,116 @@
+#include <iostream>
+#include <cstring>
+#include <cctype>
+#include <cmath>
+using namespace std;
+
+// Stack ADT
+class Stack {
+private:
+    int top;
+    int capacity;
+    int* arr;
+
+public:
+    Stack(int size) {
+        capacity = size;
+        arr = new int[capacity];
+        top = -1;
+    }
+
+    ~Stack() {
+        delete[] arr;
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+
+    bool isFull() {
+        return top == capacity - 1;
+    }
+
+    void push(int x) {
+        if (isFull()) {
+            cout << "Stack overflow!\n";
+            return;
+        }
+        arr[++top] = x;
+    }
+
+    int pop() {
+        if (isEmpty()) {
+            cout << "Stack underflow!\n";
+            return -1;
+        }
+        return arr[top--];
+    }
+
+    int peek() {
+        if (isEmpty()) return -1;
+        return arr[top];
+    }
+};
+
+// Function to evaluate Postfix expression
+int evaluatePostfix(const string& exp) {
+    Stack s(exp.size());
+
+    for (char c : exp) {
+        if (isdigit(c)) {
+            s.push(c - '0');  // Convert char digit to int
+        } else {
+            int val2 = s.pop();
+            int val1 = s.pop();
+
+            switch (c) {
+                case '+': s.push(val1 + val2); break;
+                case '-': s.push(val1 - val2); break;
+                case '*': s.push(val1 * val2); break;
+                case '/': s.push(val1 / val2); break;
+                case '^': s.push(pow(val1, val2)); break;
+            }
+        }
+    }
+    return s.pop();
+}
+
+// Function to evaluate Prefix expression
+int evaluatePrefix(const string& exp) {
+    Stack s(exp.size());
+
+    // Scan from right to left
+    for (int i = exp.size() - 1; i >= 0; i--) {
+        char c = exp[i];
+
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else {
+            int val1 = s.pop();
+            int val2 = s.pop();
+
+            switch (c) {
+                case '+': s.push(val1 + val2); break;
+                case '-': s.push(val1 - val2); break;
+                case '*': s.push(val1 * val2); break;
+                case '/': s.push(val1 / val2); break;
+                case '^': s.push(pow(val1, val2)); break;
+            }
+        }
+    }
+    return s.pop();
+}
+
+// Main function
+int main() {
+    string postfix = "23*54*+9-";  // Example: (2*3) + (5*4) - 9 = 17
+    string prefix  = "-+*23*549"; // Same in prefix form
+
+    cout << "Postfix Expression: " << postfix << endl;
+    cout << "Evaluated Result = " << evaluatePostfix(postfix) << endl;
+
+    cout << "Prefix Expression: " << prefix << endl;
+    cout << "Evaluated Result = " << evaluatePrefix(prefix) << endl;
+
+    return 0;
+}
