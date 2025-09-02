@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for circular linked list
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+// Circular Linked List ADT
+class CircularLinkedList {
+private:
+    Node* last;  // Pointer to the last node (last->next = head)
+
+public:
+    // Constructor
+    CircularLinkedList() {
+        last = nullptr;
+    }
+
+    // Insert element at the end
+    void insert(int x) {
+        Node* newNode = new Node(x);
+
+        if (last == nullptr) { // Empty list
+            last = newNode;
+            last->next = last; // Point to itself
+        } else {
+            newNode->next = last->next; // New node points to head
+            last->next = newNode;       // Old last points to new node
+            last = newNode;             // New node becomes last
+        }
+    }
+
+    // Remove first occurrence of element
+    void remove(int x) {
+        if (last == nullptr) {
+            cout << "List is empty!\n";
+            return;
+        }
+
+        Node* curr = last->next; // Head
+        Node* prev = last;
+
+        // Search for the node
+        do {
+            if (curr->data == x) {
+                if (curr == last && curr == last->next) { 
+                    // Single node case
+                    delete curr;
+                    last = nullptr;
+                } else {
+                    prev->next = curr->next;
+                    if (curr == last) 
+                        last = prev; // Update last if deleting last node
+                    delete curr;
+                }
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        } while (curr != last->next);
+
+        cout << "Element " << x << " not found!\n";
+    }
+
+    // Search for an element and return pointer to node
+    Node* search(int x) {
+        if (last == nullptr) return nullptr;
+
+        Node* temp = last->next; // Start from head
+        do {
+            if (temp->data == x) return temp;
+            temp = temp->next;
+        } while (temp != last->next);
+
+        return nullptr; // Not found
+    }
+
+    // Display list
+    void display() {
+        if (last == nullptr) {
+            cout << "List is empty!\n";
+            return;
+        }
+        Node* temp = last->next; // Start from head
+        do {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        } while (temp != last->next);
+        cout << "(back to head)\n";
+    }
+};
+
+// Main function
+int main() {
+    CircularLinkedList cll;
+
+    cll.insert(10);
+    cll.insert(20);
+    cll.insert(30);
+    cll.insert(40);
+
+    cout << "Circular Linked List: ";
+    cll.display();
+
+    cout << "Removing 20...\n";
+    cll.remove(20);
+    cll.display();
+
+    cout << "Removing 40...\n";
+    cll.remove(40);
+    cll.display();
+
+    Node* found = cll.search(30);
+    if (found)
+        cout << "Element 30 found at address: " << found << endl;
+    else
+        cout << "Element 30 not found!\n";
+
+    return 0;
+}
