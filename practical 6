@@ -1,0 +1,163 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for BST
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+// BST ADT
+class BST {
+private:
+    Node* root;
+
+    // Helper: Insert
+    Node* insert(Node* node, int x) {
+        if (node == nullptr) return new Node(x);
+        if (x < node->data)
+            node->left = insert(node->left, x);
+        else if (x > node->data)
+            node->right = insert(node->right, x);
+        return node;
+    }
+
+    // Helper: Search
+    Node* search(Node* node, int x) {
+        if (node == nullptr || node->data == x)
+            return node;
+        if (x < node->data)
+            return search(node->left, x);
+        else
+            return search(node->right, x);
+    }
+
+    // Helper: Find minimum value node
+    Node* findMin(Node* node) {
+        while (node && node->left != nullptr)
+            node = node->left;
+        return node;
+    }
+
+    // Helper: Delete
+    Node* deleteNode(Node* node, int x) {
+        if (node == nullptr) return node;
+
+        if (x < node->data) {
+            node->left = deleteNode(node->left, x);
+        } else if (x > node->data) {
+            node->right = deleteNode(node->right, x);
+        } else {
+            // Node found
+            if (node->left == nullptr) {
+                Node* temp = node->right;
+                delete node;
+                return temp;
+            } else if (node->right == nullptr) {
+                Node* temp = node->left;
+                delete node;
+                return temp;
+            }
+            // Node with 2 children
+            Node* temp = findMin(node->right);
+            node->data = temp->data;
+            node->right = deleteNode(node->right, temp->data);
+        }
+        return node;
+    }
+
+    // Traversals
+    void inorder(Node* node) {
+        if (node != nullptr) {
+            inorder(node->left);
+            cout << node->data << " ";
+            inorder(node->right);
+        }
+    }
+
+    void preorder(Node* node) {
+        if (node != nullptr) {
+            cout << node->data << " ";
+            preorder(node->left);
+            preorder(node->right);
+        }
+    }
+
+    void postorder(Node* node) {
+        if (node != nullptr) {
+            postorder(node->left);
+            postorder(node->right);
+            cout << node->data << " ";
+        }
+    }
+
+public:
+    // Constructor
+    BST() : root(nullptr) {}
+
+    // ADT functions
+    void insert(int x) { root = insert(root, x); }
+    void remove(int x) { root = deleteNode(root, x); }
+    Node* search(int x) { return search(root, x); }
+
+    void displayInorder() {
+        cout << "Inorder: ";
+        inorder(root);
+        cout << endl;
+    }
+
+    void displayPreorder() {
+        cout << "Preorder: ";
+        preorder(root);
+        cout << endl;
+    }
+
+    void displayPostorder() {
+        cout << "Postorder: ";
+        postorder(root);
+        cout << endl;
+    }
+};
+
+// Main function
+int main() {
+    BST bst;
+
+    // Insert elements
+    bst.insert(50);
+    bst.insert(30);
+    bst.insert(70);
+    bst.insert(20);
+    bst.insert(40);
+    bst.insert(60);
+    bst.insert(80);
+
+    cout << "BST Traversals after insertion:\n";
+    bst.displayInorder();
+    bst.displayPreorder();
+    bst.displayPostorder();
+
+    // Search
+    int key = 40;
+    if (bst.search(key))
+        cout << "Element " << key << " found in BST\n";
+    else
+        cout << "Element " << key << " not found!\n";
+
+    // Delete
+    cout << "Deleting 20...\n";
+    bst.remove(20);
+    bst.displayInorder();
+
+    cout << "Deleting 30...\n";
+    bst.remove(30);
+    bst.displayInorder();
+
+    cout << "Deleting 50...\n";
+    bst.remove(50);
+    bst.displayInorder();
+
+    return 0;
+}
