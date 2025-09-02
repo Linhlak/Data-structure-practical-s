@@ -1,0 +1,129 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for doubly linked list
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+    Node(int val) : data(val), prev(nullptr), next(nullptr) {}
+};
+
+// Doubly Linked List ADT
+class DoublyLinkedList {
+private:
+    Node* head;
+    Node* tail;
+
+public:
+    // Constructor
+    DoublyLinkedList() {
+        head = nullptr;
+        tail = nullptr;
+    }
+
+    // Insert at the beginning
+    void insertAtBeginning(int x) {
+        Node* newNode = new Node(x);
+        if (head == nullptr) { // Empty list
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+    }
+
+    // Insert at the end
+    void insertAtEnd(int x) {
+        Node* newNode = new Node(x);
+        if (tail == nullptr) { // Empty list
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+    }
+
+    // Remove from beginning
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "List is empty!\n";
+            return;
+        }
+        Node* temp = head;
+        if (head == tail) { // Single node
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev = nullptr;
+        }
+        delete temp;
+    }
+
+    // Remove from end
+    void removeFromEnd() {
+        if (tail == nullptr) {
+            cout << "List is empty!\n";
+            return;
+        }
+        Node* temp = tail;
+        if (head == tail) { // Single node
+            head = tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
+        delete temp;
+    }
+
+    // Display forward
+    void displayForward() {
+        Node* temp = head;
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->next;
+        }
+        cout << "NULL\n";
+    }
+
+    // Display backward
+    void displayBackward() {
+        Node* temp = tail;
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->prev;
+        }
+        cout << "NULL\n";
+    }
+};
+
+// Main function
+int main() {
+    DoublyLinkedList dll;
+
+    dll.insertAtBeginning(10);
+    dll.insertAtBeginning(20);
+    dll.insertAtBeginning(30);
+    cout << "List after insertions at beginning: ";
+    dll.displayForward();
+
+    dll.insertAtEnd(40);
+    dll.insertAtEnd(50);
+    cout << "List after insertions at end: ";
+    dll.displayForward();
+
+    dll.removeFromBeginning();
+    cout << "List after removing from beginning: ";
+    dll.displayForward();
+
+    dll.removeFromEnd();
+    cout << "List after removing from end: ";
+    dll.displayForward();
+
+    cout << "Display backward traversal: ";
+    dll.displayBackward();
+
+    return 0;
+}
