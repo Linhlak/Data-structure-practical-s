@@ -1,0 +1,97 @@
+#include <iostream>
+using namespace std;
+
+// Node for queue
+struct Node {
+    int data;
+    Node* next;
+    Node(int x) : data(x), next(NULL) {}
+};
+
+// Queue ADT
+class Queue {
+private:
+    Node* frontPtr;
+    Node* rearPtr;
+
+public:
+    Queue() {
+        frontPtr = rearPtr = NULL;
+    }
+
+    // Insert (enqueue)
+    void enqueue(int x) {
+        Node* temp = new Node(x);
+        if (rearPtr == NULL) {
+            frontPtr = rearPtr = temp;
+            return;
+        }
+        rearPtr->next = temp;
+        rearPtr = temp;
+    }
+
+    // Remove (dequeue)
+    void dequeue() {
+        if (frontPtr == NULL) {
+            cout << "Queue is empty\n";
+            return;
+        }
+
+        Node* temp = frontPtr;
+        frontPtr = frontPtr->next;
+
+        if (frontPtr == NULL)   // queue becomes empty
+            rearPtr = NULL;
+
+        delete temp;
+    }
+
+    // Get front element
+    int front() {
+        if (frontPtr == NULL) {
+            cout << "Queue is empty\n";
+            return -1;
+        }
+        return frontPtr->data;
+    }
+
+    // Check empty
+    bool isEmpty() {
+        return (frontPtr == NULL);
+    }
+
+    // Display queue
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty\n";
+            return;
+        }
+
+        Node* temp = frontPtr;
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << "\n";
+    }
+};
+
+// Driver code
+int main() {
+    Queue q;
+
+    q.enqueue(10);
+    q.enqueue(20);
+    q.enqueue(30);
+
+    cout << "Queue: ";
+    q.display();
+
+    q.dequeue();
+    cout << "After dequeue: ";
+    q.display();
+
+    cout << "Front element = " << q.front() << endl;
+
+    return 0;
+}
