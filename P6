@@ -1,0 +1,169 @@
+#include <iostream>
+using namespace std;
+
+// Node structure
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int x) {
+        data = x;
+        left = right = NULL;
+    }
+};
+
+// BST ADT
+class BST {
+private:
+    Node* root;
+
+    // Insert helper
+    Node* insertRec(Node* node, int x) {
+        if (node == NULL)
+            return new Node(x);
+
+        if (x < node->data)
+            node->left = insertRec(node->left, x);
+        else if (x > node->data)
+            node->right = insertRec(node->right, x);
+
+        return node;
+    }
+
+    // Search helper
+    Node* searchRec(Node* node, int x) {
+        if (node == NULL || node->data == x)
+            return node;
+
+        if (x < node->data)
+            return searchRec(node->left, x);
+        else
+            return searchRec(node->right, x);
+    }
+
+    // Find minimum value (used in delete)
+    Node* findMin(Node* node) {
+        while (node && node->left != NULL)
+            node = node->left;
+        return node;
+    }
+
+    // Delete helper
+    Node* deleteRec(Node* node, int x) {
+        if (node == NULL) return node;
+
+        if (x < node->data)
+            node->left = deleteRec(node->left, x);
+        else if (x > node->data)
+            node->right = deleteRec(node->right, x);
+
+        else {
+            // Case 1 & 2: node with one or zero children
+            if (node->left == NULL) {
+                Node* temp = node->right;
+                delete node;
+                return temp;
+            }
+            else if (node->right == NULL) {
+                Node* temp = node->left;
+                delete node;
+                return temp;
+            }
+
+            // Case 3: node with two children
+            Node* temp = findMin(node->right);
+            node->data = temp->data;
+            node->right = deleteRec(node->right, temp->data);
+        }
+        return node;
+    }
+
+    // Traversals
+    void inorderRec(Node* node) {
+        if (node == NULL) return;
+        inorderRec(node->left);
+        cout << node->data << " ";
+        inorderRec(node->right);
+    }
+
+    void preorderRec(Node* node) {
+        if (node == NULL) return;
+        cout << node->data << " ";
+        preorderRec(node->left);
+        preorderRec(node->right);
+    }
+
+    void postorderRec(Node* node) {
+        if (node == NULL) return;
+        postorderRec(node->left);
+        postorderRec(node->right);
+        cout << node->data << " ";
+    }
+
+public:
+    BST() {
+        root = NULL;
+    }
+
+    void insert(int x) {
+        root = insertRec(root, x);
+    }
+
+    void deleteNode(int x) {
+        root = deleteRec(root, x);
+    }
+
+    Node* search(int x) {
+        return searchRec(root, x);
+    }
+
+    void inorder() {
+        inorderRec(root);
+        cout << "\n";
+    }
+
+    void preorder() {
+        preorderRec(root);
+        cout << "\n";
+    }
+
+    void postorder() {
+        postorderRec(root);
+        cout << "\n";
+    }
+};
+
+// Driver
+int main() {
+    BST tree;
+
+    tree.insert(50);
+    tree.insert(30);
+    tree.insert(70);
+    tree.insert(20);
+    tree.insert(40);
+    tree.insert(60);
+    tree.insert(80);
+
+    cout << "Inorder: ";
+    tree.inorder();
+
+    cout << "Preorder: ";
+    tree.preorder();
+
+    cout << "Postorder: ";
+    tree.postorder();
+
+    int key = 40;
+    Node* result = tree.search(key);
+    if (result) cout << key << " found\n";
+    else cout << key << " not found\n";
+
+    tree.deleteNode(70);
+
+    cout << "After deleting 70, inorder: ";
+    tree.inorder();
+
+    return 0;
+}
